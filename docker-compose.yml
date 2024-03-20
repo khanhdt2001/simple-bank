@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: simplebank_postgres
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-v8hlDV0yMAHHlIurYupj}
+      POSTGRES_DB: simplebank
+    ports:
+      - 5434:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+volumes:
+  postgres:
