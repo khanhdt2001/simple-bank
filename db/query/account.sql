@@ -12,6 +12,12 @@ INSERT INTO accounts (
 SELECT * FROM accounts
 WHERE id = $1 LIMIT 1;
 
+-- name: GetAccountForUpdate :one
+SELECT * FROM accounts
+WHERE id = $1 LIMIT 1
+FOR NO KEY UPDATE;
+-- FOR NO KEY UPDATE other transactions can still read the same account data, but they cannot modify it
+
 -- name: ListAccount :many
 Select * from accounts
 order by id
