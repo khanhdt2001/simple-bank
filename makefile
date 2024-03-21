@@ -10,5 +10,8 @@ sqlc-generate:
 	sqlc generate
 
 test:
+	go test -v -cover ./...
+
+test-coverprofile:
 	go test -v ./... -coverprofile=cover.out
 	go tool cover -html=cover.out
