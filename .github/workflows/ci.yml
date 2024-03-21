@@ -28,7 +28,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - 5434:5432
 
     steps:
     - uses: actions/checkout@v3
@@ -40,9 +40,9 @@ jobs:
     
     - name: Install Golang migrate
       run: |
-      curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.0/migrate.darwin-amd64.tar.gz | tar xvz
-      sudo mv migrate.linux-amd64 /usr/bin/migrate
-      which migrate
+        curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.0/migrate.linux-amd64.tar.gz | tar xvz
+        sudo mv migrate /usr/bin/migrate
+        which migrate
 
     - name: Run migrations
       run: make migrateup
