@@ -15,3 +15,6 @@ test:
 test-coverprofile:
 	go test -v ./... -coverprofile=cover.out
 	go tool cover -html=cover.out
+
+server:
+	go run main.go
