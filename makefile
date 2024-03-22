@@ -16,5 +16,8 @@ test-coverprofile:
 	go test -v ./... -coverprofile=cover.out
 	go tool cover -html=cover.out
 
+mock: 
+	mockgen -package mockdb  -destination ./db/mock/store.go simple_bank/db/sqlc Store
+	
 server:
 	go run main.go

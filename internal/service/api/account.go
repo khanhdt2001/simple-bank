@@ -51,7 +51,7 @@ func (server *Server) getAccount(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, account)
+	c.JSON(http.StatusOK, account)
 }
 
 func (server *Server) listAccount(c *gin.Context) {
