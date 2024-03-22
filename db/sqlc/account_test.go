@@ -2,10 +2,11 @@ package db
 
 import (
 	"context"
-	"github.com/stretchr/testify/require"
 	"simple_bank/util"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func createRandomAccount(t *testing.T) Account {
@@ -40,6 +41,23 @@ func TestGetAccount(t *testing.T) {
 	require.Equal(t, account.Balance, account1.Balance)
 	require.Equal(t, account.Currency, account1.Currency)
 	require.WithinDuration(t, account.CreatedAt, account1.CreatedAt, time.Second)
+}
+
+func TestListAccounts(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		createRandomAccount(t)
+	}
+	args := ListAccountParams{
+		Limit:  5,
+		Offset: 5,
+	}
+	accounts, err := testQueries.ListAccount(context.Background(), args)
+	require.NoError(t, err)
+	require.Len(t, accounts, 5)
+
+	for _, acc := range accounts {
+		require.NotEmpty(t, acc)
+	}
 }
 
 func TestUpdateAccount(t *testing.T) {
