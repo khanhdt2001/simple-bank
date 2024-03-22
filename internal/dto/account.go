@@ -2,7 +2,7 @@ package dto
 
 type CreateAccountRequest struct {
 	Owner    string `json:"owner" binding:"required"`
-	Currency string `json:"currency"  binding:"required,oneof=USD EUR" `
+	Currency string `json:"currency" binding:"required,oneof=USD EUR"`
 }
 
 type GetAccountRequest struct {
@@ -10,6 +10,6 @@ type GetAccountRequest struct {
 }
 
 type ListAccountsRequest struct {
-	PageId   int64 `from:"page_id" binding:"required,min=1"`
-	PageSize int64 `from:"page_size" binding:"required,min=5,max=10"`
+	PageId   int64 `form:"page_id" binding:"required,min=1"`
+	PageSize int64 `form:"page_size" binding:"required,min=5,max=10"`
 }
