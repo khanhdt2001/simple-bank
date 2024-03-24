@@ -1,10 +1,11 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin/binding"
-	"github.com/go-playground/validator/v10"
 	db "simple_bank/db/sqlc"
 	"simple_bank/internal/validation"
+
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,6 +28,7 @@ func NewServer(store db.Store) *Server {
 	router.GET("/accounts", server.listAccount)
 
 	router.POST("/transfers", server.createTransfer)
+	router.POST("/users", server.createUser)
 
 	server.router = router
 	return server

@@ -50,7 +50,7 @@ type CreateAccountParams struct {
 	Currency string
 }
 
-func (q *Queries)  CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
+func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
 	row := q.db.QueryRowContext(ctx, createAccount, arg.Owner, arg.Balance, arg.Currency)
 	var i Account
 	err := row.Scan(
