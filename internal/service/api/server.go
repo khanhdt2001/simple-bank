@@ -21,19 +21,20 @@ type Server struct {
 }
 
 func NewServer(config util.Config, store db.Store) (*Server, error) {
-	server := &Server{store: store}
 
 	tokenMaker, err := token.NewPasetoMaker(config.TokenSymetriKey)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create token maker: %w", err)
 	}
-
+	server := &Server{
+		config:     config,
+		store:      store,
+		tokenMaker: tokenMaker,
+	}
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("currency", validation.ValidCurrency)
 	}
 	server.setUpRouter()
-	server.tokenMaker = tokenMaker
-	server.config = config
 	return server, nil
 }
 
@@ -41,12 +42,13 @@ func (server *Server) setUpRouter() {
 	router := gin.Default()
 
 	router.POST("/accounts", server.createAccount)
-	router.GET("/accounts/:id", server.getAccount)
-	router.GET("/accounts", server.listAccount)
-
 	router.POST("/transfers", server.createTransfer)
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
+
+	authRouter := router.Group("/").Use(authMiddleware(server.tokenMaker))
+	authRouter.GET("/accounts/:id", server.getAccount)
+	authRouter.GET("/accounts", server.listAccount)
 
 	server.router = router
 }
