@@ -16,3 +16,13 @@ type UserResponse struct {
 	PasswordChangedAt time.Time `json:"password_changed_at"`
 	CreatedAt         time.Time `json:"created_at"`
 }
+
+type UserLoginRequest struct {
+	Username string `json:"username" binding:"required,alphanum"`
+	Password string `json:"password" binding:"required,min=6"`
+}
+
+type UserLoginResponse struct {
+	AccessToken string       `json:"access_token"`
+	User        UserResponse `json:"user"`
+}

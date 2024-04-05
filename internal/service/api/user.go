@@ -1,10 +1,13 @@
 package api
 
 import (
+	"database/sql"
+	"errors"
 	"net/http"
 	db "simple_bank/db/sqlc"
 	"simple_bank/internal/dto"
 	"simple_bank/util"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
@@ -52,4 +55,38 @@ func (server *Server) createUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, newUserResponse(user))
+}
+
+func (server *Server) loginUser(c *gin.Context) {
+	var req dto.UserLoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+	user, err := server.store.GetUser(c, req.Username)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			c.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	err = util.CheckPassword(req.Password, user.HashedPassword)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
+	accessToken, err := server.tokenMaker.CreateToken(user.Username, time.Minute)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	rsp := dto.UserLoginResponse{
+		AccessToken: accessToken,
+		User:        newUserResponse(user),
+	}
+	c.JSON(http.StatusOK, rsp)
 }
