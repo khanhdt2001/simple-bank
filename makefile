@@ -1,10 +1,10 @@
 migrateup:
 	go get -u -d github.com/golang-migrate/migrate
-	migrate -path db/migrate -database "postgresql://postgres:v8hlDV0yMAHHlIurYupj@localhost:5434/simplebank?sslmode=disable" -verbose up
+	migrate -path db/migration -database "postgresql://postgres:v8hlDV0yMAHHlIurYupj@localhost:5434/simplebank?sslmode=disable" -verbose up
 
 migratedown:
 	go get -u -d github.com/golang-migrate/migrate
-	migrate -path db/migrate -database "postgresql://postgres:v8hlDV0yMAHHlIurYupj@localhost:5434/simplebank?sslmode=disable" -verbose down
+	migrate -path db/migration -database "postgresql://postgres:v8hlDV0yMAHHlIurYupj@localhost:5434/simplebank?sslmode=disable" -verbose down
 
 sqlc-generate:
 	sqlc generate
