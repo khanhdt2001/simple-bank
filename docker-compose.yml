@@ -10,9 +10,26 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-v8hlDV0yMAHHlIurYupj}
       POSTGRES_DB: simplebank
     ports:
-      - 5434:5432
+      - 5432:5432
     volumes:
       - postgres:/var/lib/postgresql/data
+    networks:
+      - backend
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_SOURCE=postgresql://postgres:v8hlDV0yMAHHlIurYupj@postgres:5432/simplebank?sslmode=disable
+    networks:
+      - backend
+    depends_on:
+      - postgres
 
 volumes:
   postgres:
+networks:
+  backend:
+    driver: bridge
