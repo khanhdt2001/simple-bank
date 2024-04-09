@@ -6,6 +6,16 @@ migratedown:
 	go get -u -d github.com/golang-migrate/migrate
 	migrate -path db/migration -database "postgresql://postgres:v8hlDV0yMAHHlIurYupj@localhost:5434/simplebank?sslmode=disable" -verbose down
 
+
+migrateupAWS:
+	go get -u -d github.com/golang-migrate/migrate
+	migrate -path db/migration -database "postgresql://root:cpNSewxGRarVJpFBdFR3@simplebank-postgres.ctya4a00qorp.ap-southeast-1.rds.amazonaws.com:5434/simplebank" -verbose up
+
+migratedownAWS:
+	go get -u -d github.com/golang-migrate/migrate
+	migrate -path db/migration -database "postgresql://root:cpNSewxGRarVJpFBdFR3@simplebank-postgres.ctya4a00qorp.ap-southeast-1.rds.amazonaws.com:5434/simplebank" -verbose down
+
+
 sqlc-generate:
 	sqlc generate
 
