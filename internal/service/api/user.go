@@ -7,7 +7,6 @@ import (
 	db "simple_bank/db/sqlc"
 	"simple_bank/internal/dto"
 	"simple_bank/util"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
@@ -79,14 +78,41 @@ func (server *Server) loginUser(c *gin.Context) {
 		return
 	}
 
-	accessToken, err := server.tokenMaker.CreateToken(user.Username, time.Minute)
+	accessToken, accessTokenPayload, err := server.tokenMaker.CreateToken(
+		user.Username, server.config.AccessTokenDuration)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	refreshToken, refreshTokenPayload, err := server.tokenMaker.CreateToken(
+		user.Username,
+		server.config.RefreshTokenDuration,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	session, err := server.store.CreateSession(c, db.CreateSessionParams{
+		ID:           refreshTokenPayload.ID,
+		Username:     user.Username,
+		RefreshToken: refreshToken,
+		UserAgent:    c.Request.UserAgent(),
+		ClientIp:     c.ClientIP(),
+		ExpiresAt:    refreshTokenPayload.ExpiredAt,
+	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 	rsp := dto.UserLoginResponse{
-		AccessToken: accessToken,
-		User:        newUserResponse(user),
+		SessionId:           session.ID,
+		AccessToken:         accessToken,
+		AccessTokenExpires:  accessTokenPayload.ExpiredAt,
+		RefreshToken:        refreshToken,
+		RefreshTokenExpires: refreshTokenPayload.ExpiredAt,
+		User:                newUserResponse(user),
 	}
 	c.JSON(http.StatusOK, rsp)
 }

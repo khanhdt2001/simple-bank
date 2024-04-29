@@ -14,12 +14,16 @@ type PasetoMaker struct {
 }
 
 // CreateToken implements Maker.
-func (p *PasetoMaker) CreateToken(username string, duration time.Duration) (string, error) {
+func (p *PasetoMaker) CreateToken(username string, duration time.Duration) (string, *Payload, error) {
 	payload, err := NewPayload(username, duration)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
-	return p.paseto.Encrypt(p.symetricKey, payload, nil)
+	token, err := p.paseto.Encrypt(p.symetricKey, payload, nil)
+	if err != nil {
+		return "", nil, err
+	}
+	return token, payload, nil
 }
 
 // VerifyToken implements Maker.
