@@ -24,3 +24,9 @@ server:
 
 new_migration:
 	migrate create -ext sql -dir db/migration -seq $(name)
+
+proto:
+	rm -rf proto/pb/proto*.pb.go
+	buf generate
+
+.PHONY: migrateup migratedown sqlc-generate test test-coverprofile mock server new_migration proto
