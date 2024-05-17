@@ -3,8 +3,21 @@ syntax = "proto3";
 package pb;
 
 import "google/protobuf/timestamp.proto";
-import "google/api/annotations.proto";
+import "proto/google/api/annotations.proto";
+import "proto/protoc-gen-openapiv2/options/annotations.proto";
 option go_package = "simple_bank/proto/pb";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Simple bank API";
+    version: "1.0";
+    contact: {
+      name: "khanhdt";
+      url: "https://github.com/khanhdt2001/simple-bank";
+      email: "none@example.com";
+    };
+  };
+};
 
 message User {
   string username = 1;
@@ -36,6 +49,16 @@ message LoginUserResponse {
 }
 
 service UserService {
-  rpc CreateUser(CreateUserRequest) returns (User);
-  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
+  rpc CreateUser(CreateUserRequest) returns (User){
+    option (google.api.http) = {
+      post: "/v1/create_user"
+      body: "*"
+    };
+  };
+  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse){
+    option (google.api.http) = {
+      post: "/v1/login_user"
+      body: "*"
+    };
+  };
 }

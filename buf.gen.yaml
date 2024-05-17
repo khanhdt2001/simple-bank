@@ -11,3 +11,5 @@ plugins:
     opt:
       - paths=source_relative
       - generate_unbound_methods=true
+  - plugin: openapiv2
+    out: proto/openapiv2
